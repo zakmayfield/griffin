@@ -8,31 +8,77 @@ generator client {
 }
 
 model User {
-  id    String @id @default(cuid())
-  email String @unique
+  id        String     @id @default(cuid())
+  name      String
+  email     String     @unique
+  password  Password?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  notes     Note[]
+  comments  Comment[]
+  sessions  Session[]
+  questions Question[]
 
-  password Password?
-  notes    Note[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
 model Password {
-  hash String
+  hash   String
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
 }
 
 model Note {
-  id    String @id @default(cuid())
-  title String
-  body  String
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
+model Session {
+  id        String     @id @default(cuid())
+  content   String
+
+  questions Question[]
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Question {
+  id        String    @id @default(cuid())
+  content   String
+  answer    String?
+
+  comments  Comment[]
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  session   Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  sessionId String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Comment {
+  id         String   @id @default(cuid())
+  content    String
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId     String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  questionId String
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
