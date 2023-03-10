@@ -5,7 +5,7 @@ export function getAllSessions() {
   return prisma.session.findMany()
 }
 
-// i wouldn't have chose such a similar name to our 'sessions' 
+// i wouldn't have chose such a similar name to our 'sessions' for these tables 
 export function getSession(id: string) {
   return prisma.session.findUnique({
     where: {
