@@ -19,11 +19,31 @@ export async function action({ request }: ActionArgs) {
   const name = formData.get("name");
   const email = formData.get("email");
   const password = formData.get("password");
+  // this will redirect to / by default
   const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
+
+  /*
+    return structure of action:
+    
+    actionData: {
+      errors: {
+        name: null,
+        email: null,
+        password: null
+      },
+      status: 000
+    }
+  */
 
   if (typeof name !== "string" || name.length === 0) {
     return json(
-      { errors: { name: 'Name is a required field', email: null, password: null } },
+      {
+        errors: {
+          name: "Name is a required field",
+          email: null,
+          password: null,
+        },
+      },
       { status: 400 }
     );
   }
@@ -67,6 +87,7 @@ export async function action({ request }: ActionArgs) {
 
   const user = await createUser(name, email, password);
 
+  // final return of our action is a redirect 
   return createUserSession({
     request,
     userId: user.id,
@@ -84,12 +105,14 @@ export const meta: MetaFunction = () => {
 export default function Join() {
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirectTo") ?? undefined;
+  // action data is the data returned from the 'action' function
   const actionData = useActionData<typeof action>();
   const nameRef = React.useRef<HTMLInputElement>(null);
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
+    // if an error on the ref then focus that specific input // easy way to direct users to the input that errored
     if (actionData?.errors?.email) {
       emailRef.current?.focus();
     } else if (actionData?.errors?.password) {
