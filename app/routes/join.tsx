@@ -20,11 +20,11 @@ export async function action({ request }: ActionArgs) {
   const email = formData.get("email");
   const password = formData.get("password");
   // this will redirect to / by default
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
+  const redirectTo = safeRedirect(formData.get("redirectTo"), "/sessions");
 
   /*
     return structure of action:
-    
+
     actionData: {
       errors: {
         name: null,
